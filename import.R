@@ -1,3 +1,11 @@
+"""
+Source code for Railway system climate risk management
+
+Main functions for import datasets and preprocessing.
+
+Copyright (C) 2024 Weiping Wang. All versions released under the GNU Affero General Public License v3.0 license.
+"""
+
 library(raster)
 library(rgdal)
 library(ggplot2)

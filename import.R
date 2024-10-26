@@ -1,10 +1,9 @@
-/*  
-Source code for Railway system climate risk management
+#Source code for Railway system climate risk management
 
-Main functions for import datasets and preprocessing.
+#Main functions for import datasets and preprocessing.
 
-Copyright (C) 2024 Weiping Wang. All versions released under the GNU Affero General Public License v3.0 license.
-*/
+#Copyright (C) 2024 Weiping Wang. All versions released under the GNU Affero General Public License v3.0 license.
+
 
 library(raster)
 library(rgdal)
@@ -47,10 +46,10 @@ load("../res/resRailwaywithTime.RData")
 
 
 #######from railway shapefile data to network########
-/*  
-    These codes convert a railway network from a shapefile format into an igraph format for storage.
-    First read shapefile data and then covert
-*/ 
+ 
+#    These codes convert a railway network from a shapefile format into an igraph format for storage.
+#    First read shapefile data and then covert
+ 
 dataRailway=fread("../Data/openRailwayBothEnds.txt",header = TRUE,sep = ",")
 
 dataStationList=read.csv("../Data/车站信息.csv",stringsAsFactors=FALSE,fileEncoding = 'GBK')
@@ -72,18 +71,18 @@ edgeList=data.frame(nodeIndex[(c(1:(dimRoad[1]/2))-1)*2+1],nodeIndex[(c(1:(dimRo
 
 
 ########covert edgelist to spatialdataframe#################
-/*   
-    These codes convert edge list of network with igraph format to shapfile format.
-*/ 
+   
+#    These codes convert edge list of network with igraph format to shapfile format.
+ 
 
 railway_line_DF=produceSpatialLines(edgeList,uniqueXY)
 
 writeOGR(railway_line_DF,"railway_line.shp","railway", driver="ESRI Shapefile",overwrite_layer=TRUE)
 
 ############################giant connected component##############################################
-/*  
-    These codes calculate giant connected componentt from origin network.
-*/
+  
+#    These codes calculate giant connected componentt from origin network.
+
 
 gRoad=graph_from_edgelist(as.matrix(edgeList),directed = FALSE)
 V(gRoad)$id <- 1:gorder(gRoad)
@@ -112,10 +111,9 @@ writeOGR(railway_line_giant_DF,"railway_line_giant.shp","railway", driver="ESRI 
 
 
 
-/*  
-    Read province boundary data.
+ 
+ #   Read province boundary data.
 
-*/
 region_shp <- readOGR("../Data/省级行政区.shp",encoding ="GBK")
 region_province_shp_m <- spTransform(region_shp, "+proj=merc +units=m")
 region_province_shp_m$pID=c(1:34)
@@ -135,11 +133,9 @@ writeOGR(region_province_shp_m,"province_tf.shp","province", driver="ESRI Shapef
 #railway_shp <- readOGR("../Data/主要铁路.shp",encoding ="GBK")
 
 ###########draw figure##########
+  
+#    draw province boundary map.
 
-/*  
-    draw province boundary map.
-
-*/
 par(mar=c(0,0,0,0))
 plot(region_shp, col="#f2f2f2", bg="skyblue", lwd=0.25, border=0 )
 
@@ -156,10 +152,9 @@ fileDisName="Display"
 #g <- getData("GADM", country="China", level=1)
 
 ###############create raster with region shapefile############
-/*  
-    Based on the spatial extent of the railway lines, a 1 km by 1 km grid raster is constructed.
+ 
+#    Based on the spatial extent of the railway lines, a 1 km by 1 km grid raster is constructed.
 
-*/
 m <- spTransform(region_shp, "+proj=merc +units=m")
 r <- raster(m, res=10000)
 vals=1:ncell(r)
@@ -171,10 +166,10 @@ names(rdf)[3] <- 'value' #Name value column
 AG <- fortify(m)
 
 
-/*  
-The initial railway lines retain only those within the largest connected subgraph, and isolated lines are removed. 
-If there are no isolated lines, this operation results in the same network as the original railway lines.
-*/
+ 
+# The initial railway lines retain only those within the largest connected subgraph, and isolated lines are removed. 
+# If there are no isolated lines, this operation results in the same network as the original railway lines.
+
 railway_shp <- readOGR("railway_line_giant.shp",encoding ="GBK")
 
 railway_m <- spTransform(railway_shp, "+proj=merc +units=m")
@@ -187,6 +182,7 @@ railway_all_m <- spTransform(railway_all_shp, "+proj=merc +units=m")
 writeOGR(railway_all_m,"railway_line_tf.shp","railway", driver="ESRI Shapefile",overwrite_layer=TRUE)
 
 
+###import county-level data
 region_county_shp <- readOGR("../Data/2023年县级/县级.shp",encoding ="utf-8")
 region_county_shp_m <- spTransform(region_county_shp, "+proj=merc +units=m")
 #region_county_shp_m$FID=c(1:2391)
@@ -202,7 +198,10 @@ region_county_shp = st_as_sf(region_county_shp_m)
 #writeOGR(region_county_shp_m_new,"county_tf.shp","county",encoding ="utf-8", driver="ESRI Shapefile",overwrite_layer=TRUE)
 
 
+
 ###################calculate overlap length for each link########
+###Spatial analysis to calculate railway lines falling within different spatial extents
+
 tif=read_stars(out_raster_file, package = "stars")
 sf=st_as_sf(tif)
 

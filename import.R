@@ -135,6 +135,11 @@ writeOGR(region_province_shp_m,"province_tf.shp","province", driver="ESRI Shapef
 #railway_shp <- readOGR("../Data/主要铁路.shp",encoding ="GBK")
 
 ###########draw figure##########
+
+/*  
+    draw province boundary map.
+
+*/
 par(mar=c(0,0,0,0))
 plot(region_shp, col="#f2f2f2", bg="skyblue", lwd=0.25, border=0 )
 
@@ -151,6 +156,10 @@ fileDisName="Display"
 #g <- getData("GADM", country="China", level=1)
 
 ###############create raster with region shapefile############
+/*  
+    Based on the spatial extent of the railway lines, a 1 km by 1 km grid raster is constructed.
+
+*/
 m <- spTransform(region_shp, "+proj=merc +units=m")
 r <- raster(m, res=10000)
 vals=1:ncell(r)
@@ -162,7 +171,10 @@ names(rdf)[3] <- 'value' #Name value column
 AG <- fortify(m)
 
 
-
+/*  
+The initial railway lines retain only those within the largest connected subgraph, and isolated lines are removed. 
+If there are no isolated lines, this operation results in the same network as the original railway lines.
+*/
 railway_shp <- readOGR("railway_line_giant.shp",encoding ="GBK")
 
 railway_m <- spTransform(railway_shp, "+proj=merc +units=m")

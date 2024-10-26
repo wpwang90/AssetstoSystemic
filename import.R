@@ -1,10 +1,10 @@
-"""
+/*  
 Source code for Railway system climate risk management
 
 Main functions for import datasets and preprocessing.
 
 Copyright (C) 2024 Weiping Wang. All versions released under the GNU Affero General Public License v3.0 license.
-"""
+* /
 
 library(raster)
 library(rgdal)
@@ -47,10 +47,10 @@ load("../res/resRailwaywithTime.RData")
 
 
 #######from railway shapefile data to network########
-""" 
+/*  
     These codes convert a railway network from a shapefile format into an igraph format for storage.
     First read shapefile data and then covert
-""" 
+* / 
 dataRailway=fread("../Data/openRailwayBothEnds.txt",header = TRUE,sep = ",")
 
 dataStationList=read.csv("../Data/车站信息.csv",stringsAsFactors=FALSE,fileEncoding = 'GBK')
@@ -72,18 +72,18 @@ edgeList=data.frame(nodeIndex[(c(1:(dimRoad[1]/2))-1)*2+1],nodeIndex[(c(1:(dimRo
 
 
 ########covert edgelist to spatialdataframe#################
-""" 
+/*   
     These codes convert edge list of network with igraph format to shapfile format.
-""" 
+* / 
 
 railway_line_DF=produceSpatialLines(edgeList,uniqueXY)
 
 writeOGR(railway_line_DF,"railway_line.shp","railway", driver="ESRI Shapefile",overwrite_layer=TRUE)
 
 ############################giant connected component##############################################
-""" 
+/*  
     These codes calculate giant connected componentt from origin network.
-""" 
+* /
 
 gRoad=graph_from_edgelist(as.matrix(edgeList),directed = FALSE)
 V(gRoad)$id <- 1:gorder(gRoad)
@@ -112,6 +112,10 @@ writeOGR(railway_line_giant_DF,"railway_line_giant.shp","railway", driver="ESRI 
 
 
 
+/*  
+    Read province boundary data.
+
+* /
 region_shp <- readOGR("../Data/省级行政区.shp",encoding ="GBK")
 region_province_shp_m <- spTransform(region_shp, "+proj=merc +units=m")
 region_province_shp_m$pID=c(1:34)

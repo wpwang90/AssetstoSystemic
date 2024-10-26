@@ -52,4 +52,4 @@ library(scales)
 library(EnvStats)
 ```
 ### License
-Copyright (C) 2024 Weiping Wang. All versions released under the [GNU Affero General Public License v3.0 license](LICENSE).
+Copyright (C) 2024 Weiping Wang. All versions released under the [GNU Affero General Public License v3.0 license](LICENSE.txt).

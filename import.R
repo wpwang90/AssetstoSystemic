@@ -628,7 +628,6 @@ ggsave(wid=16,hei=5,paste0('../Res/','Systematicloss_in_county.pdf'))
 
 region_province_shp<-region_province_shp%>%
   arrange(Pt_Ollval)
-region_province_shp1=region_province_shp[c(4:34),]
 tempplot=ggplot(data=region_province_shp1, aes(x=NAME, y=Pt_Ollval, fill = Pt_Ollval)) +
   geom_bar(stat="identity")+
   #scale_colour_gradient(low = "yellow", high = "red", na.value = NA)+
@@ -739,7 +738,8 @@ region_province_shp<-region_province_shp%>%
   arrange(pID)
 region_province_shp$Pt_TPTLlval=Pt_TPTLlval
 
-#############draw_functional loss for county#########3
+
+##draw map for county-level infrastructure services losses
 
 tempplot=ggplot()+
   geom_sf(data=region_county_shp,aes(fill = ifelse(Ct_TPTLlval != 0, Ct_TPTLlval, NA)),colour = alpha("black",0))+
@@ -759,11 +759,10 @@ print(tempplot)
 ggsave(wid=16,hei=5,paste0('../Res/','Functionalloss_in_county.pdf'))
 
 
-#############draw_functional loss for province#########3
+##draw map for province-level infrastructure services losses
 
 region_province_shp<-region_province_shp%>%
   arrange(Pt_TPTLlval)
-region_province_shp1=region_province_shp[c(2,5:34),]
 tempplot=ggplot(data=region_province_shp1, aes(x=NAME, y=Pt_TPTLlval, fill = Pt_TPTLlval)) +
   geom_bar(stat="identity")+
   #scale_colour_gradient(low = "yellow", high = "red", na.value = NA)+
@@ -778,31 +777,6 @@ tempplot=ggplot(data=region_province_shp1, aes(x=NAME, y=Pt_TPTLlval, fill = Pt_
   ylab("Ratio of the minimum travel time") 
 print(tempplot)
 ggsave(wid=4,hei=5,paste0('../Res/','Functionalloss_in_province_bar.pdf'))
-
-
-
-
-
-#writeRaster(Orr,'China1000_O_linkslosscausedbyonegrid.tif',overwrite=TRUE)
-
-
-#my_breaks = c(1000, 10000, 100000, 1000000,10000000)
-# region_shp <- readOGR("../Data/省级行政区.shp",encoding ="GBK")
-# region_AG <- fortify(region_shp)
-# region_m <- spTransform(region_shp, "+proj=merc +units=m")#墨卡托投影
-
-
-
-tempplot=ggplot()+theme_few(base_size = 18, base_family = "sans")+geom_raster(data = TRLlvaldf,mapping=aes(x=x, y=y, fill= ifelse(value != 0, value, NA)))+
-  scale_fill_gradientn(colours= brewer.pal(11, "Spectral"),  na.value = "white",name='value')
-tempplot=tempplot+geom_polygon(data=region_m, aes(long, lat, group = group), colour = alpha("black", 1/2), size = 0.2,fill="white", alpha = .01)
-print(tempplot)
-
-
-tempplot=ggplot()+theme_few(base_size = 18, base_family = "sans")+geom_raster(data = TPTLlvaldf,mapping=aes(x=x, y=y, fill= ifelse(value != 0, value, NA)))+
-  scale_fill_gradientn(colours= rev(brewer.pal(11, "Spectral")),  na.value = "white",name='value')
-tempplot=tempplot+geom_polygon(data=region_m, aes(long, lat, group = group), colour = alpha("black", 1/2), size = 0.2,fill="white", alpha = .01)
-print(tempplot)
 
 
 

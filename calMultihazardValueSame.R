@@ -191,7 +191,7 @@ region_county_shp$Length_tvals_slr=Length_tvals_slr*county_railwayline_cost*0.1
 region_county_shp$Length_tvals_river=region_county_shp$Length_tvals_slr
 River_Length_tvals_slr=region_county_shp$Length_tvals_slr
 
-##Calculate the loss of systemic functions for railway system under landslides
+##Calculate the loss of systemic functions for railway system under river flooding
 
 Ct_Ollval_slr=region_county_shp$FID*0
 
@@ -228,8 +228,10 @@ region_county_shp$Ct_TPTLlval_river=region_county_shp$Ct_TPTLlval_slr
 River_Ct_TPTLlval_slr=region_county_shp$Ct_TPTLlval_slr
 
 
-###########################calculate coastal hazard#######
-rcp=c(26,45,85)
+##Calculate three types of railwaylosses under coastal flooding: physical assets, systemic functions and infrastructure services. 
+##First, import the inundated area caused by coastal flooding,
+##Next, we use inundated area to calculate the three types of losses—railway physical assets, system functionality, 
+#and infrastructure services—across different counties based on the probability of asset loss from coastal flooding."rcp=c(26,45,85)
 slr_flood_len_list=list()
 rcpi=45
 
@@ -256,9 +258,7 @@ slr_flood_len_list=append(slr_flood_len_list,list(slr_flood_len))
 
 rcpi=1
 
-###############cal physcial lossess###########
-
-
+##Calculate the loss of physical assets for railway system under coastal flooding
 
 Length_tvals_slr=region_county_shp$FID*0
 
@@ -273,7 +273,7 @@ region_county_shp$Length_tvals_slr=Length_tvals_slr*county_railwayline_cost*0.1
 
 Coast_Length_tvals_slr=region_county_shp$Length_tvals_slr
 
-#############calculate systematic lossess##########3
+##Calculate the loss of systemic functions for railway system under coastal flooding
 Ct_Ollval_slr=region_county_shp$FID*0
 
 for (i in 1:length(county_all_df_alllines$FID)){
@@ -299,7 +299,7 @@ region_county_shp$Ct_Ollval_slr=Ct_Ollval_slr*0.1/1000*county_railwayline_cost
 Coast_Ct_Ollval_slr=region_county_shp$Ct_Ollval_slr
 
 
-#########calculated function loss for aggregated 
+##Calculate the loss of infrastructure services for railway system under coastal flooding
 
 Ct_TPTLlval_slr=region_county_shp$FID*0
 
@@ -347,7 +347,9 @@ Total_Length_tvals_slr=pmax(Land_Length_tvals_slr/3+River_Length_tvals_slr/3+Coa
 temp_Length_tvals_slr=calMaxIndex(Land_Length_tvals_slr,River_Length_tvals_slr,Coast_Length_tvals_slr)
 Max_Length_tvals_slr=temp_Length_tvals_slr[[1]]
 alpha_value=temp_Length_tvals_slr[[2]]
-#######physical########
+
+##draw map of losses of physical assets for railway system under multi hazards
+
 tempplot=ggplot()+
   #geom_sf(data=region_county_shp,aes(fill = ifelse(Total_Length_tvals_slr != 0, Total_Length_tvals_slr, NA)),colour = alpha("black",0))+
   #geom_sf(data=region_county_shp,aes(fill = rescale_Value(Total_Length_tvals_slr)),colour = alpha("black",0))+
@@ -382,7 +384,8 @@ ggsave(wid=6,hei=5,paste0('../Res/','Multihazard',rcp[rcpi],'length_in_county','
 
 ggsave(wid=6,hei=4, dpi = 450,paste0('../Res/','Multihazard',rcp[rcpi],'length_in_county','.jpg'))
 
-##############max
+##draw map of losses of physical assets for railway system under dominated hazards
+
 #labs <- c(1, 2, 3,4)
 #labs_plot=c('None','Landslides','River flooding','Coastal flooding')
 labs_plot=c('None','Landslides<1/2','Landslides<3/4','Landslides','River flooding<1/2','River flooding<3/4','River flooding','Coastal flooding<1/2','Coastal flooding<3/4','Coastal flooding')
@@ -445,7 +448,8 @@ temp_Max_Ct_Ollval_slr=calMaxIndex(Land_Ct_Ollval_slr,River_Ct_Ollval_slr,Coast_
 Max_Ct_Ollval_slr=temp_Max_Ct_Ollval_slr[[1]]
 alpha_value=temp_Max_Ct_Ollval_slr[[2]]
 
-######systematic######
+##draw map of losses of systemic functions for railway system under multi hazards
+
 tempplot=ggplot()+
   #geom_sf(data=region_county_shp,aes(fill = ifelse(Total_Ct_Ollval_slr != 0, Total_Ct_Ollval_slr, NA)),colour = alpha("black",0))+
   geom_sf(data=region_county_shp,aes(fill =cut(Total_Ct_Ollval_slr,quantile(Total_Ct_Ollval_slr,probs=c(0,0.25,0.5,0.75,0.95,1),na.rm=TRUE))),lwd=0)+
@@ -480,8 +484,8 @@ ggsave(wid=6,hei=5,paste0('../Res/','Multihazard',rcp[rcpi],'Systematicloss_in_c
 
 ggsave(wid=6,hei=4,paste0('../Res/','Multihazard',rcp[rcpi],'Systematicloss_in_county.jpg'))
 
-#####max
 
+##draw map of losses of systemic functions for railway system under dominated hazards
 
 tempplot=ggplot()+
   geom_sf(data=region_county_shp,aes(fill = factor(alpha_value)),lwd = 0)+
@@ -533,7 +537,9 @@ temp_Max_Ct_TPTLlval_slr=calMaxIndex(Land_Ct_TPTLlval_slr,River_Ct_TPTLlval_slr,
 Max_Ct_TPTLlval_slr=temp_Max_Ct_TPTLlval_slr[[1]]
 alpha=temp_Max_Ct_TPTLlval_slr[[2]]
 
-#############draw_functional loss for county#########3
+
+##draw map of losses of infrastructure services for railway system under multi hazards
+
 
 tempplot=ggplot()+
   geom_sf(data=region_county_shp,aes(fill =cut(Total_Ct_TPTLlval_slr,quantile(Total_Ct_TPTLlval_slr,probs=c(0,0.25,0.5,0.75,0.95,1),na.rm=TRUE))),lwd=0)+
@@ -568,7 +574,7 @@ plot5=tempplot
 
 ggsave(wid=6,hei=5,paste0('../Res/','Multihazard',rcp[rcpi],'Functionalloss_in_county.pdf'))
 
-#######max
+##draw map of losses of infrastructure services for railway system under dominated hazards
 tempplot=ggplot()+
   geom_sf(data=region_county_shp,aes(fill = factor(alpha)),lwd=0)+
   geom_sf(data=region_province_shp, fill = NA,size = 0.01,colour = alpha("black"),lwd=0.05)+
@@ -612,7 +618,10 @@ print(tempplot)
 ggsave(wid=6,hei=5,paste0('../Res/','MaxMultihazard',rcp[rcpi],'MaxFunctionalloss_in_county.pdf'))
 
 plot6=tempplot
-finalp <- ggpubr::ggarrange(plot1, plot2, plot3, plot4,plot5,plot6, nrow = 3, ncol=2,labels = letters[1:6])#将p1-p4四幅图组合成一幅图，按照两行两列排列，标签分别为A、B、C、D。（LETTERS[1:4] 意为提取26个大写英文字母的前四个:A、B、C、D）
+
+##"Integrate the 6 subplots into a single figure"
+
+finalp <- ggpubr::ggarrange(plot1, plot2, plot3, plot4,plot5,plot6, nrow = 3, ncol=2,labels = letters[1:6])
 finalp
 ggsave(wid=10,hei=12,dpi=450,paste0('../Res/','MaxMultihazard',rcp[rcpi],'MaxFinalRe.jpg'))
 

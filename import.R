@@ -536,7 +536,7 @@ print(tempplot)
 ggsave(wid=16,hei=10,"../Res/Gao_lines.pdf")
 
 
-########calculate systemic functions loss caused by each  gird
+##calculate systemic functions loss caused by each gird
 
 Ollval=vals*0
 uID=unique(all_df$China1000.tif)
@@ -580,7 +580,7 @@ for (i in 1:length(ints_all$China1000.tif)){
 }
 
 
-
+##calculate systemic functions loss caused by each county
 
 Ct_Ollval=region_county_shp$FID*0
 
@@ -604,7 +604,7 @@ region_province_shp$Pt_Ollval=Pt_Ollval*0.099/1000
 
 
 
-#############draw_functional loss for county#########3
+##draw map for systemic functions loss caused by each county
 
 tempplot=ggplot()+
   geom_sf(data=region_county_shp,aes(fill = ifelse(Ct_Ollval != 0, Ct_Ollval, NA)),colour = alpha("black",0))+
@@ -624,10 +624,7 @@ print(tempplot)
 ggsave(wid=16,hei=5,paste0('../Res/','Systematicloss_in_county.pdf'))
 
 
-#############draw_functional loss for province#########3
-
-
-
+##draw bar figure for systemic functions loss caused by each province
 
 region_province_shp<-region_province_shp%>%
   arrange(Pt_Ollval)
@@ -649,18 +646,6 @@ ggsave(wid=4,hei=5,paste0('../Res/','Systematicloss_in_province_bar.pdf'))
 
 
 
-# temp_df=all_df[1:5000,]
-# 
-# res=temp_df %>% 
-#   group_by(ID,tempIDNameList)%>% 
-#   mutate(intersect = list(reduce(tempIDNameList, intersect)))%>% 
-#   select(ID,intersect)
-# 
-# library(palmerpenguins)
-# 
-# all_df %>% max(ID)
-
-
 Orr <- setValues(r, Ollval)
 Orrdf = as.data.frame(Orr, xy=TRUE)
 names(Orrdf)[3] <- 'value'
@@ -668,29 +653,11 @@ names(Orrdf)[3] <- 'value'
 writeRaster(Orr,'China1000_O_linkslosscausedbyonegrid.tif',overwrite=TRUE)
 
 
-my_breaks = c(1000, 10000, 100000, 1000000,10000000)
-region_shp <- readOGR("../Data/省级行政区.shp",encoding ="GBK")
-region_AG <- fortify(region_shp)
-region_m <- spTransform(region_shp, "+proj=merc +units=m")#墨卡托投影
-
-
-
-tempplot=ggplot()+theme_few(base_size = 18, base_family = "sans")+geom_raster(data = Orrdf,mapping=aes(x=x, y=y, fill= ifelse(value != 0, value, NA)))+
-  scale_fill_gradientn(colours= rev(brewer.pal(11, "Spectral")),  na.value = "white",trans = "log",breaks = my_breaks, labels = my_breaks,name='value')
-tempplot=tempplot+geom_polygon(data=region_m, aes(long, lat, group = group), colour = alpha("black", 1/2), size = 0.2,fill="white", alpha = .01)
-print(tempplot)
-
-
-
-########calculate all travel loss between provinces caused by one gird
+##calculate infrastructure services losses caused by each grid
 
 TRLlval=vals*0 ######reduce rate of number of lines between provinces#####
 TULlval=vals*0 ######reduce rate of passed lines between provinces#####
 TPTLlval=vals*0 ######rate of minum times of passed lines between provinces#####
-
-
-
-
 
 #Big_value=10e5
 
@@ -730,22 +697,6 @@ for (ui in 1:length(uID)){
 }
 
 
-
-for (i in 1:length(ints_all$China1000.tif)){
-  if(TRLlval[ints_all$China1000.tif[i]]==0)
-    TRLlval[ints_all$China1000.tif[i]]=0.9967152
-  
-}
-
-
-for (i in 1:length(ints_all$China1000.tif)){
-  if(TPTLlval[ints_all$China1000.tif[i]]==0)
-    TPTLlval[ints_all$China1000.tif[i]]=1.000125
-  
-}
-
-
-
 TRLlvalr <- setValues(r, TRLlval)
 TRLlvaldf = as.data.frame(TRLlvalr, xy=TRUE)
 names(TRLlvaldf)[3] <- 'value'
@@ -761,6 +712,7 @@ writeRaster(TPTLlvalr,'China1000_times_provinces.tif',overwrite=TRUE)
 
 
 
+##calculate infrastructure services losses caused by each county
 
 Ct_TPTLlval=region_county_shp$FID*0
 
@@ -770,6 +722,7 @@ for (i in 1:length(county_all_df_alllines$FID)){
 }
 
 
+##calculate infrastructure services losses caused by each province
 
 Pt_TPTLlval=region_province_shp$pID*0
 
@@ -780,7 +733,6 @@ for (i in 1:length(province_all_df_alllines$pID)){
 }
 
 region_county_shp$Ct_TPTLlval=Ct_TPTLlval
-
 
 
 region_province_shp<-region_province_shp%>%

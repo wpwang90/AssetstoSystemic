@@ -32,6 +32,7 @@ library(raster)
 library(igraph)
 library(scales)
 
+
 source("produceSpatialLines.R")
 
 load("../res/resStationToStationwithID.RData")
@@ -42,10 +43,14 @@ load("../res/resRailwaywithID.RData")
 load("../res/resRailwaywithTime.RData")
 #resRailwaywithID$as.numeric.sPaths.k..
 
-#########init stage #
+#########init stage #########
 
 
 #######from railway shapefile data to network########
+""" 
+    These codes convert a railway network from a shapefile format into an igraph format for storage.
+    First read shapefile data and then covert
+""" 
 dataRailway=fread("../Data/openRailwayBothEnds.txt",header = TRUE,sep = ",")
 
 dataStationList=read.csv("../Data/车站信息.csv",stringsAsFactors=FALSE,fileEncoding = 'GBK')
@@ -67,6 +72,10 @@ edgeList=data.frame(nodeIndex[(c(1:(dimRoad[1]/2))-1)*2+1],nodeIndex[(c(1:(dimRo
 
 
 ########covert edgelist to spatialdataframe#################
+""" 
+    These codes convert edge list of network with igraph format to shapfile format.
+""" 
+
 railway_line_DF=produceSpatialLines(edgeList,uniqueXY)
 
 writeOGR(railway_line_DF,"railway_line.shp","railway", driver="ESRI Shapefile",overwrite_layer=TRUE)

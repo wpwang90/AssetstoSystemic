@@ -66,6 +66,7 @@ for (i in 1:length(county_all_df_alllines$FID)){
     as.numeric(county_all_df_alllines$lenght[i]*slr_flood_len_list[[total_i]][county_all_df_alllines$China1000.tif[i]])/1000
 }
 
+##Calculate the loss of physical assets for railway system under landslides
 
 region_county_shp$Length_tvals_slr=Length_tvals_slr*county_railwayline_cost*0.1
 
@@ -73,7 +74,8 @@ region_county_shp$Length_tvals_slr=Length_tvals_slr*county_railwayline_cost*0.1
 Land_Length_tvals_slr=region_county_shp$Length_tvals_slr
 region_county_shp$Length_tvals_land=region_county_shp$Length_tvals_slr
 
-##Calculate the loss of physical assets for railway system under landslides
+##Calculate the loss of systemic functions for railway system under landslides
+
 Ct_Ollval_slr=region_county_shp$FID*0
 
 for (i in 1:length(county_all_df_alllines$FID)){
@@ -85,13 +87,11 @@ for (i in 1:length(county_all_df_alllines$FID)){
 
 region_county_shp$Ct_Ollval_slr=Ct_Ollval_slr*0.1/1000*county_railwayline_cost
 
-
 region_county_shp$Ct_Ollval_land=region_county_shp$Ct_Ollval_slr
-
 Land_Ct_Ollval_slr=region_county_shp$Ct_Ollval_slr
 
-##Calculate the loss of physical assets for railway system under landslides
 
+##Calculate the loss of infrastructure services for railway system under landslides
 
 Ct_TPTLlval_slr=region_county_shp$FID*0
 
@@ -110,8 +110,10 @@ region_county_shp$Ct_TPTLlval_land=region_county_shp$Ct_TPTLlval_slr
 Land_Ct_TPTLlval_slr=region_county_shp$Ct_TPTLlval_slr   
 
 
-###########################calculate river hazard#######
-
+##Calculate three types of railwaylosses under river flooding: physical assets, systemic functions and infrastructure services. 
+##First, import the inundated depth caused by river flooding, and then we combine flood depth-damage function to compute the probability of asset loss. 
+##Next, calculate the three types of losses—railway physical assets, system functionality, 
+#and infrastructure services—across different counties based on the probability of asset loss from river flooding."
 
 library(terra)
 library(ncdf4)
@@ -173,9 +175,8 @@ final_df=data.frame()
 total_i=(rcpi-1)*length(period_length)+period_i
 total_i=1
 
-###############cal physcial lossess###########
 
-
+##Calculate the loss of physical assets for railway system under river flooding
 
 Length_tvals_slr=region_county_shp$FID*0
 
@@ -190,7 +191,8 @@ region_county_shp$Length_tvals_slr=Length_tvals_slr*county_railwayline_cost*0.1
 region_county_shp$Length_tvals_river=region_county_shp$Length_tvals_slr
 River_Length_tvals_slr=region_county_shp$Length_tvals_slr
 
-#############calculate systematic lossess##########3
+##Calculate the loss of systemic functions for railway system under landslides
+
 Ct_Ollval_slr=region_county_shp$FID*0
 
 for (i in 1:length(county_all_df_alllines$FID)){
@@ -206,9 +208,7 @@ region_county_shp$Ct_Ollval_slr=Ct_Ollval_slr*0.1/1000*county_railwayline_cost
 region_county_shp$Ct_Ollval_river=region_county_shp$Ct_Ollval_slr
 River_Ct_Ollval_slr=region_county_shp$Ct_Ollval_slr
 
-#########calculated function loss for aggregated 
-
-
+##Calculate the loss of infrastructure services for railway system under river flooding
 
 Ct_TPTLlval_slr=region_county_shp$FID*0
 

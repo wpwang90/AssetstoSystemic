@@ -19,19 +19,36 @@ The data sources utilized in this study encompass various domains related to rai
     "data_path": "../Data/",
     "result_path": "../res/",
 
-## Python requirements
+## R packages requirements
 
-Recommended option is to use a [miniconda](https://conda.io/miniconda.html)
-environment to work in for this project, relying on conda to handle some of the
-trickier library dependencies.
 
 ```bash
 
-# Add conda-forge channel for extra packages
-conda config --add channels conda-forge
-
-# Create a conda environment for the project and install packages
-conda env create -f environment.yml
-activate AssetstoSystemic
+library(raster)
+library(rgdal)
+library(ggplot2)
+library(maptools)  
+library(stars)
+library(sf)
+library(dplyr)
+library(tidyr)
+library(car)
+library(reshape2)
+library(data.table)
+library(ggthemes)
+library(RColorBrewer)
+library(purrr)
+library(proj4)
+library(rineq)
+library(ncdf4)
+library(tidyverse)
+library(ggplot2)
+library(ggpubr)
+library(cowplot)
+library(ggExtra)
+library(raster)
+library(igraph)
+library(scales)
+library(EnvStats)
 
 

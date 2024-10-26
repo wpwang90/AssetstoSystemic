@@ -248,7 +248,9 @@ ints_all = st_intersection(polys_all, sf)%>%
 
 all_df <- merge(ints, resRailwaywithID, by.x ="ID", by.y ="as.numeric.sPaths.k..")
 
-#############calculated length for county#########3
+#############calculated length for county#########
+###Spatial analysis to calculate railway length within each county
+
 ints_all_county_length = st_intersection(polys_all, region_county_shp)%>% 
   mutate(lenght = st_length(.)) %>% 
   
@@ -276,6 +278,7 @@ region_county_shp$Length_tvals=Length_tvals*0.1
 
 
 
+###Draw map for railway length within each county
 
 tempplot=ggplot()+
   geom_sf(data=region_county_shp,aes(fill = ifelse(Length_tvals != 0, Length_tvals, NA)),colour = alpha("black",0))+
@@ -295,7 +298,9 @@ print(tempplot)
 ggsave(wid=16,hei=5,paste0('../Res/','length_in_county.pdf'))
 
 
-#############calculated length for province#########3
+#############calculated length for province#########
+###Spatial analysis to calculate railway length within each province
+
 ints_all_province_length = st_intersection(polys_all, region_province_shp)%>% 
   mutate(lenght = st_length(.)) %>% 
   
@@ -316,6 +321,9 @@ region_province_shp$Length_tvals=Length_tvals*0.099
 region_province_shp<-region_province_shp%>%
   arrange(Length_tvals)
 region_province_shp1=region_province_shp[c(4:34),]
+
+###Draw bar figure for railway length within each province
+
 tempplot=ggplot(data=region_province_shp1, aes(x=NAME, y=Length_tvals, fill = Length_tvals)) +
   geom_bar(stat="identity")+
   #scale_colour_gradient(low = "yellow", high = "red", na.value = NA)+
@@ -343,6 +351,7 @@ ggsave(wid=4,hei=5,paste0('../Res/','length_in_province_bar.pdf'))
 
 
 
+###Convert the length unit in the 1km*1km grid from meters to kilometers
 
 tvals_len=vals*0
 for (i in 1:length(ints$China1000.tif)){
@@ -356,6 +365,7 @@ for (i in 1:length(ints_all$China1000.tif)){
 
 
 
+###Draw map for railway length within each 1km*1km grid
 
 rr <- setValues(r, tvals_all_len)
 rrdf = as.data.frame(rr, xy=TRUE)
@@ -390,14 +400,18 @@ ggsave(wid=16,hei=9,paste0('../Res/','Railwaylengthingrid.jpg'))
 
 writeRaster(rr,'China1000_all_lengths.tif',overwrite=TRUE)
 
+################
+
 ########merge all dataframe##########
+##Match the train schedules passing through each grid
+
 all_df <- merge(ints, resRailwaywithID, by.x ="ID", by.y ="as.numeric.sPaths.k..")
 oall_df=all_df
 all_df=all_df[!duplicated(all_df),]
 
 
 
-
+##Match the train schedules passing through each county
 county_all_df <- merge(all_df, ints_county, by ="China1000.tif")
 
 county_all_df_alllines <- merge(ints_all, ints_county, by ="China1000.tif")
@@ -407,6 +421,7 @@ county_all_df=county_all_df[,c("China1000.tif","ID","tempIDNameList","lenght","F
 county_all_df=county_all_df[!duplicated(county_all_df),]
 
 
+##Match the train schedules passing through each province
 province_all_df <- merge(all_df, ints_province, by ="China1000.tif")
 
 province_all_df_alllines <- merge(ints_all, ints_province, by ="China1000.tif")
@@ -419,6 +434,7 @@ province_all_df=province_all_df[!duplicated(province_all_df),]
 
 
 
+##Obtain the number of high-speed trains and regular trains passing through each grid
 
 tvals=vals*0
 #6

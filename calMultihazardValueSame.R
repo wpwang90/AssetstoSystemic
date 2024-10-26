@@ -1,18 +1,21 @@
-###This code is for Fig.3 #######
+#Source code for Railway system climate risk management
 
+#Calculate three types of railway lossess under landslides and floods.
 
-###########################calculate landslides hazard#######
+#Copyright (C) 2024 Weiping Wang. All versions released under the GNU Affero General Public License v3.0 license.
 
+##Calculate three types of railwaylosses under landslides: physical assets, systemic functions and infrastructure services. 
+##First, import the landslide susceptibility and frequency of rainfall events exceeding thresholds data, and compute the probability of asset loss. 
+##Next, calculate the three types of losses—railway physical assets, system functionality, 
+#and infrastructure services—across different counties based on the probability of asset loss from landslide disasters."
 library(terra)
 #rcp=c(1,2,3,5)
 rcp=c(1,2,3)
 rcp_length=c("1-2.6","2-4.5","3-7.0","5-8.5")
 period=c("f","m","n")
 period_length=c("2080-2099","2041-2060","2021-2040")
-period_name=c(2090,2050,2030)
+period_name=c(2100,2050,2030)
 ssp_namelist=c('ssp1','ssp2','ssp3')
-
-
 
 slr_flood_len_list=list()
 rcpi=2
@@ -29,25 +32,12 @@ p_coord=st_coordinates(p2)
 freq_slr_flood_file=paste0('../Data/landslides/freq_s',rcp[rcpi],period[period_i],'_median.tif')
 suscep_slr_flood_file=paste0('../Data/landslides/suscep_ca2_s',rcp[rcpi],period[period_i],'_median.tif')
 
-# freq_flood_tif=raster(freq_slr_flood_file)
-# freq_z=extract(freq_flood_tif, p_coord)
-# 
-# suscep_flood_tif=raster(suscep_slr_flood_file)
-# suscep_z=extract(suscep_flood_tif, p_coord)
-# 
-# freq_z[is.na(freq_z)] = 0
-# suscep_z[is.na(suscep_z)] = 0
-# 
-# 
-# slr_flood_len=freq_z*suscep_z/100
-
 
 freq_flood_tif=raster(freq_slr_flood_file)
-#freq_z=raster::extract(freq_flood_tif, p_coord)
 
 suscep_flood_tif=raster(suscep_slr_flood_file)
-#suscep_z=raster::extract(suscep_flood_tif, p_coord)
 
+# compute the probability of railway system loss under landsildes
 grid2 <- projectRaster(suscep_flood_tif*freq_flood_tif/100, r, method = "ngb")
 
 
@@ -67,9 +57,7 @@ final_df=data.frame()
 total_i=(rcpi-1)*length(period)+period_i
 total_i=1
 
-###############cal physcial lossess###########
-
-
+##Calculate the loss of physical assets for railway system under landslides
 
 Length_tvals_slr=region_county_shp$FID*0
 
@@ -85,7 +73,7 @@ region_county_shp$Length_tvals_slr=Length_tvals_slr*county_railwayline_cost*0.1
 Land_Length_tvals_slr=region_county_shp$Length_tvals_slr
 region_county_shp$Length_tvals_land=region_county_shp$Length_tvals_slr
 
-#############calculate systematic lossess##########3
+##Calculate the loss of physical assets for railway system under landslides
 Ct_Ollval_slr=region_county_shp$FID*0
 
 for (i in 1:length(county_all_df_alllines$FID)){
@@ -102,8 +90,7 @@ region_county_shp$Ct_Ollval_land=region_county_shp$Ct_Ollval_slr
 
 Land_Ct_Ollval_slr=region_county_shp$Ct_Ollval_slr
 
-#########calculated function loss for aggregated 
-
+##Calculate the loss of physical assets for railway system under landslides
 
 
 Ct_TPTLlval_slr=region_county_shp$FID*0

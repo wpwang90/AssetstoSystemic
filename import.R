@@ -1,6 +1,6 @@
 #Source code for Railway system climate risk management
 
-#Main functions for import datasets and preprocessing.
+#Main functions for import datasets and calculate three types of railway lossess
 
 #Copyright (C) 2024 Weiping Wang. All versions released under the GNU Affero General Public License v3.0 license.
 

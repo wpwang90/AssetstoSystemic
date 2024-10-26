@@ -80,7 +80,10 @@ railway_line_DF=produceSpatialLines(edgeList,uniqueXY)
 
 writeOGR(railway_line_DF,"railway_line.shp","railway", driver="ESRI Shapefile",overwrite_layer=TRUE)
 
-############################最大连通子图##############################################
+############################giant connected component##############################################
+""" 
+    These codes calculate giant connected componentt from origin network.
+""" 
 
 gRoad=graph_from_edgelist(as.matrix(edgeList),directed = FALSE)
 V(gRoad)$id <- 1:gorder(gRoad)

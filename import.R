@@ -449,6 +449,8 @@ for (i in 1:length(all_df$China1000.tif)){
   }
 }
 
+##Obtain the number of high-speed trains and regular trains passing through each county
+
 Ct_tvals=region_county_shp$FID*0
 #6
 Ct_Gvals=region_county_shp$FID*0
@@ -462,14 +464,7 @@ for (i in 1:length(county_all_df$FID)){
   }
 }
 
-for (i in 1:length(county_all_df_alllines$FID)){
-  if(Ct_tvals[county_all_df_alllines$FID[i]]==0)
-    Ct_tvals[county_all_df_alllines$FID[i]]=2
-  
-  if(Ct_Gvals[county_all_df_alllines$FID[i]]==0)
-    Ct_Gvals[county_all_df_alllines$FID[i]]=33
-}
-
+##Obtain the number of high-speed trains and regular trains passing through each province
 
 Pt_tvals=region_province_shp$pID*0
 #6
@@ -484,16 +479,6 @@ for (i in 1:length(province_all_df$pID)){
   }
 }
 
-
-
-
-for (i in 1:length(province_all_df_alllines$pID)){
-  if(Pt_tvals[province_all_df_alllines$pID[i]]==0)
-    Pt_tvals[province_all_df_alllines$pID[i]]=1728
-
-  if(Pt_Gvals[province_all_df_alllines$pID[i]]==0)
-    Pt_Gvals[province_all_df_alllines$pID[i]]=4872
-}
 
 region_county_shp$Ct_tvals=Ct_tvals
 region_county_shp$Ct_Gvals=Ct_Gvals
@@ -521,7 +506,8 @@ region_AG <- fortify(region_shp)
 region_m <- spTransform(region_shp, "+proj=merc +units=m")#墨卡托投影
 
 
-########calculate all lines for each grid #####
+########draw map for all lines for each grid 
+
 tempplot=ggplot()+theme_few(base_size = 18, base_family = "sans")+geom_raster(data = rrdf,mapping=aes(x=x, y=y, fill= ifelse(value != 0, value, NA)))+
   scale_fill_gradientn(colours= brewer.pal(11, "YlGn"),  na.value = "white",trans = "log",breaks = my_breaks, labels = my_breaks,name='value')
 tempplot=tempplot+geom_polygon(data=region_m, aes(long, lat, group = group), colour = alpha("black", 1/2), size = 0.2,fill="white", alpha = .01)
@@ -531,6 +517,7 @@ ggsave(wid=16,hei=10,"../Res/all_lines.pdf")
 
 
 
+########draw map for all lines for each county
 
 tempplot=ggplot()+theme_few(base_size = 18, base_family = "sans")+geom_sf(data=region_county_shp, colour = alpha("black", 1/2), size = 0.2,aes(fill = Ct_tvals),alpha = .01)+ 
   scale_fill_gradientn(colours= brewer.pal(11, "YlGn"),  na.value = "white",trans = "log",name='Ct_tvals')
@@ -539,62 +526,7 @@ print(tempplot)
 ggsave(wid=16,hei=10,"../Res/all_lines.pdf")
 
 
-##################for county##############
-tempplot=ggplot()+theme_few(base_size = 12)+
-  geom_sf(data=region_county_shp,aes(fill = ifelse(Ct_tvals != 0, Ct_tvals, NA)),colour = alpha("black", 1/10), size = 0.2)+
-  scale_fill_gradientn(colours= rev(brewer.pal(11, "Spectral")),  na.value = "white",trans = "log",name='Ct_tvals')
-
-
-print(tempplot)
-
-tempplot=ggplot()+theme_few(base_size = 12)+
-  geom_sf(data=region_county_shp,aes(fill = ifelse(Ct_Gvals != 0, Ct_Gvals, NA)),colour = alpha("black", 1/10), size = 0.2)+
-  scale_fill_gradientn(colours= rev(brewer.pal(11, "Spectral")),  na.value = "white",trans = "log",name='Ct_Gvals')
-
-
-print(tempplot)
-
-##################for province##############
-
-
-
-
-
-tempplot=ggplot()+theme_few(base_size = 12)+
-  geom_sf(data=region_province_shp,aes(fill = ifelse(Pt_tvals != 0, Pt_tvals, NA)),colour = alpha("black", 1/10), size = 0.2)+
-  scale_fill_gradientn(colours= rev(brewer.pal(11, "Spectral")),  na.value = "white",trans = "log",name='Pt_tvals')
-
-
-print(tempplot)
-
-######
-
-tempplot=ggplot()+theme_few(base_size = 12)+
-  geom_sf(data=region_province_shp,aes(fill = ifelse(Pt_Gvals != 0, Pt_Gvals, NA)),colour = alpha("black", 1/10), size = 0.2)+
-  scale_fill_gradientn(colours= rev(brewer.pal(11, "Spectral")),  na.value = "white",trans = "log",name='Pt_Gvals')
-
-
-print(tempplot)
-
-
-region_province_shp<-region_province_shp%>%
-  arrange(Pt_tvals)
-region_province_shp1=region_province_shp[c(2,5:34),]
-ggplot(data=region_province_shp1, aes(x=NAME, y=Pt_tvals, fill = Pt_tvals)) +
-  geom_bar(stat="identity")+
-  #scale_colour_gradient(low = "yellow", high = "red", na.value = NA)+
-  scale_fill_gradient(low="white",high="darkred")+
-  coord_flip()+
-  scale_x_discrete(name="",limits = region_province_shp1$NAME)+
-  #theme()+
-  theme_few(base_size = 14, base_family = "sans")+
-  # theme(legend.position = c(.99, 0.4),
-  #       legend.justification = c("right", "top"))
-  theme(legend.position="none" )+
-  ylab("Pt") 
-
-
-########calculate G lines for each grid #####
+########draw map for high speed lines for each grid 
 
 tempplot=ggplot()+theme_few(base_size = 18, base_family = "sans")+geom_raster(data = Grrdf,mapping=aes(x=x, y=y, fill= ifelse(value != 0, value, NA)))+
   scale_fill_gradientn(colours= rev(brewer.pal(11, "Spectral")),  na.value = "white",trans = "log",breaks = my_breaks, labels = my_breaks,name='value')
@@ -604,7 +536,7 @@ print(tempplot)
 ggsave(wid=16,hei=10,"../Res/Gao_lines.pdf")
 
 
-########calculate all other links loss caused by one gird
+########calculate systemic functions loss caused by each  gird
 
 Ollval=vals*0
 uID=unique(all_df$China1000.tif)
